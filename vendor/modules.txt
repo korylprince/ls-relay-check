@@ -1,0 +1,17 @@
+# github.com/gorilla/mux v1.8.0
+## explicit
+github.com/gorilla/mux
+# github.com/gorilla/websocket v1.4.2
+## explicit
+github.com/gorilla/websocket
+# github.com/kelseyhightower/envconfig v1.4.0
+## explicit
+github.com/kelseyhightower/envconfig
+# github.com/korylprince/httputil v0.0.4
+## explicit
+github.com/korylprince/httputil/auth
+github.com/korylprince/httputil/jsonapi
+github.com/korylprince/httputil/session
+# github.com/patrickmn/go-cache v2.1.0+incompatible
+## explicit
+github.com/patrickmn/go-cache
