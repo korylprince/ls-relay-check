@@ -19,11 +19,12 @@ type CheckRequest struct {
 }
 
 type StatusResponse struct {
-	Blocked bool  `json:"blocked"`
-	Error   error `json:"error"`
+	Blocked  bool  `json:"blocked"`
+	Error    error `json:"error"`
+	Category int   `json:"category"`
 }
 
-func (c *Config) checkFunc(r *http.Request, filter func(string, string) error) (int, interface{}) {
+func (c *Config) checkFunc(r *http.Request, filter func(string, string) (int, error)) (int, interface{}) {
 	req := new(CheckRequest)
 	if err := jsonapi.ParseJSONBody(r, req); err != nil {
 		return http.StatusBadRequest, fmt.Errorf("Invalid body: %w", err)
@@ -37,9 +38,9 @@ func (c *Config) checkFunc(r *http.Request, filter func(string, string) error) (
 		return http.StatusBadRequest, errors.New("email not allowed")
 	}
 
-	err := filter(req.Email, req.ID)
+	id, err := filter(req.Email, req.ID)
 	if _, ok := err.(BlockedError); ok || err == nil {
-		return http.StatusOK, &StatusResponse{Blocked: err != nil, Error: err}
+		return http.StatusOK, &StatusResponse{Blocked: err != nil, Error: err, Category: id}
 	}
 	return http.StatusInternalServerError, err
 }

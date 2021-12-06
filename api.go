@@ -10,6 +10,12 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
+type ListEntry struct {
+	Host      string `json:"host"`
+	Display   string `json:"display"`
+	Flaggable bool   `json:"flaggable"`
+}
+
 type FilterConfig struct {
 	ContentFilter struct {
 		Categories struct {
@@ -17,8 +23,8 @@ type FilterConfig struct {
 			blocked map[int]struct{}
 		} `json:"categories"`
 		Lists struct {
-			Allowed []string `json:"allowed"`
-			Blocked []string `json:"blocked"`
+			Allowed []*ListEntry `json:"allowed"`
+			Blocked []*ListEntry `json:"blocked"`
 			allowed map[string]struct{}
 			blocked map[string]struct{}
 		} `json:"lists"`
@@ -53,6 +59,14 @@ func stringSet(strings []string) map[string]struct{} {
 	m := make(map[string]struct{})
 	for _, s := range strings {
 		m[s] = struct{}{}
+	}
+	return m
+}
+
+func listSet(list []*ListEntry) map[string]struct{} {
+	m := make(map[string]struct{})
+	for _, e := range list {
+		m[e.Host] = struct{}{}
 	}
 	return m
 }
@@ -96,8 +110,8 @@ func (c *Config) GetFilterConfig(email string) (*FilterConfig, error) {
 	}
 
 	f.ContentFilter.Categories.blocked = intSet(f.ContentFilter.Categories.Blocked)
-	f.ContentFilter.Lists.blocked = stringSet(f.ContentFilter.Lists.Blocked)
-	f.ContentFilter.Lists.allowed = stringSet(f.ContentFilter.Lists.Allowed)
+	f.ContentFilter.Lists.blocked = listSet(f.ContentFilter.Lists.Blocked)
+	f.ContentFilter.Lists.allowed = listSet(f.ContentFilter.Lists.Allowed)
 	f.Videos.SmartPlay.allowedCategoryIDs = intSet(f.Videos.SmartPlay.AllowedCategoryIDs)
 	f.Videos.YouTubeLists.allowedChannelIDs = stringSet(f.Videos.YouTubeLists.AllowedChannelIDs)
 	f.Videos.YouTubeLists.blockedChannelIDs = stringSet(f.Videos.YouTubeLists.BlockedChannelIDs)

@@ -8,15 +8,15 @@ func (b BlockedError) Error() string {
 	return string(b)
 }
 
-func (c *Config) FilterHost(email, hostname string) error {
+func (c *Config) FilterHost(email, hostname string) (int, error) {
 	filter, err := c.GetFilterConfig(email)
 	if err != nil {
-		return fmt.Errorf("Unable to get FilterConfig: %w", err)
+		return 0, fmt.Errorf("Unable to get FilterConfig: %w", err)
 	}
 
 	host, err := c.GetHostInfo(hostname)
 	if err != nil {
-		return fmt.Errorf("Unable to get Host: %w", err)
+		return 0, fmt.Errorf("Unable to get Host: %w", err)
 	}
 
 	var why error
@@ -31,18 +31,18 @@ func (c *Config) FilterHost(email, hostname string) error {
 		why = nil
 	}
 
-	return why
+	return host.CategoryID, why
 }
 
-func (c *Config) FilterVideo(email, id string) error {
+func (c *Config) FilterVideo(email, id string) (int, error) {
 	filter, err := c.GetFilterConfig(email)
 	if err != nil {
-		return fmt.Errorf("Unable to get FilterConfig: %w", err)
+		return 0, fmt.Errorf("Unable to get FilterConfig: %w", err)
 	}
 
 	video, err := c.GetVideoInfo(id)
 	if err != nil {
-		return fmt.Errorf("Unable to get Video: %w", err)
+		return 0, fmt.Errorf("Unable to get Video: %w", err)
 	}
 
 	var why error
@@ -63,18 +63,18 @@ func (c *Config) FilterVideo(email, id string) error {
 		why = nil
 	}
 
-	return why
+	return video.LightspeedCategoryID, why
 }
 
-func (c *Config) FilterChannel(email, id string) error {
+func (c *Config) FilterChannel(email, id string) (int, error) {
 	filter, err := c.GetFilterConfig(email)
 	if err != nil {
-		return fmt.Errorf("Unable to get FilterConfig: %w", err)
+		return 0, fmt.Errorf("Unable to get FilterConfig: %w", err)
 	}
 
 	channel, err := c.GetChannelInfo(id)
 	if err != nil {
-		return fmt.Errorf("Unable to get Channel: %w", err)
+		return 0, fmt.Errorf("Unable to get Channel: %w", err)
 	}
 
 	var why error
@@ -89,5 +89,5 @@ func (c *Config) FilterChannel(email, id string) error {
 		why = nil
 	}
 
-	return why
+	return channel.LightspeedCategoryID, why
 }
